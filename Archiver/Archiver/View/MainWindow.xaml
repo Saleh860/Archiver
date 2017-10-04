@@ -1,0 +1,101 @@
+﻿<Window x:Class="Archiver.View.MainWindow"        
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Archiver"
+        xmlns:view="clr-namespace:Archiver.View"
+        xmlns:model="clr-namespace:Archiver.Model"
+        xmlns:Properties="clr-namespace:Archiver.Properties" 
+        xmlns:Linq="clr-namespace:System.Xml.Linq;assembly=System.Xml.Linq" 
+        mc:Ignorable="d"
+        Title="MainWindow" Height="400" Width="800"
+        
+        FrameworkElement.FlowDirection="RightToLeft" 
+        Closing="Window_Closing">
+    
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="أرشيف">
+                <MenuItem Header="_جديد" Click="MenuNew_Click" />
+                <MenuItem Header="_فتح ..." Click="MenuLoad_Click"/>
+                <MenuItem Header="_حفظ" Click="MenuSave_Click" IsEnabled="False" x:Name="mnuSave"/>
+                <MenuItem Header="حفظ _باسم آخر..." Click="MenuSaveAs_Click" IsEnabled="False" x:Name="mnuSaveAs"/>
+                <Separator />
+                <MenuItem Header="اختبار الصحة" Click="MnuIntegrityCheck_Click" IsEnabled="False" x:Name="mnuIntegrityCheck" />
+                <Separator />
+                <MenuItem Header="_خروج"  Click="MenuExit_Click"/>
+            </MenuItem>
+        </Menu>
+        <Grid>
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            
+            <TreeView x:Name="FoldersView" Margin="0" Drop="FoldersView_Drop" AllowDrop="True"
+                      SelectedItemChanged="FoldersView_SelectedItemChanged" ItemsSource="{Binding}" DataContext="{Binding}">
+                <TreeView.Resources>
+                    <ContextMenu x:Key="FolderMenu">
+                        <MenuItem Header="تصدير" Click="ExportFolder_Click"/>
+                        <Separator />
+                        <MenuItem Header="نسخ" Click="CopyFolder_Click" />
+                        <MenuItem Header="قص" Click="CutFolder_Click" />
+                        <MenuItem Header="لصق" Click="PasteFolder_Click" />
+                        <Separator />
+                        <MenuItem Header="حذف" Click="DeleteFolder_Click" />
+                    </ContextMenu>
+
+                    <ContextMenu x:Key="ImageFolderMenu">
+                        <MenuItem Header="اعرض الأصل" Click="ShowMaster_Click"/>
+                        <Separator />
+                        <MenuItem Header="اجعله الأصل" Click="MakeMaster_Click" />
+                        <Separator />
+                        <MenuItem Header="حذف" Click="DeleteFolderImage_Click" />
+                    </ContextMenu>
+
+                    <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}" >
+                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Right" />
+                    </Style>
+                    <HierarchicalDataTemplate DataType="{x:Type model:Directory}" ItemsSource="{Binding Path=Subdirectories}">
+                        <StackPanel DragDrop.Drop="FoldersView_Drop" ContextMenu="{StaticResource FolderMenu}">
+                            <TextBlock Text="{Binding Path=Name}" AllowDrop="True" />
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+                    <HierarchicalDataTemplate DataType="{x:Type model:ImageDirectory}">
+                        <StackPanel Mouse.MouseDown="ImageDirectory_MouseDown"  ContextMenu="{StaticResource ImageFolderMenu}">
+                            <TextBlock Text="{Binding Path=Name}" Foreground="Gray"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+                </TreeView.Resources>
+            </TreeView>
+
+            <GridSplitter Grid.Column="0" ResizeDirection="Columns" Width="5"/>
+            <ListView x:Name="FilesView" Grid.Column="1">
+                <ListView.Resources>
+                    <DataTemplate DataType="{x:Type model:File}">
+                        <StackPanel>
+                            <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                            <WrapPanel>
+                                <TextBlock Text=" Bytes " />
+                                <TextBlock Text="{Binding Size}" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type model:ImageFile}">
+                        <StackPanel>
+                            <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="Gray"/>
+                            <WrapPanel>
+                                <TextBlock Text=" Bytes " Foreground="Gray" />
+                                <TextBlock Text="{Binding Size}" Foreground="Gray" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.Resources>
+            </ListView>
+        </Grid>
+    </DockPanel>
+</Window>
