@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using System;
 using System.Collections.ObjectModel;
 using Archiver.Model;
+using static Archiver.Model.Master.DeleteOptions;
+using static Archiver.Model.Object.OverwriteOptions;
+using static Archiver.Model.Object;
 
 namespace Archiver.View
 {
@@ -27,43 +30,52 @@ namespace Archiver.View
             localClipboard=null;
         //            CreateArchive();
     }
+        private string SelectSaveFolder()
+        {
+            SaveFileDialog dlg = new SaveFileDialog
+            {
+                FileName = Archive.FileName,
+                OverwritePrompt = false
+            };
 
-    private void CreateArchive()
+            if (dlg.ShowDialog() == true)
+            {
+                string pathName = dlg.FileName;
+                IO.DirectoryInfo path = new IO.FileInfo(pathName).Directory;
+                IO.FileInfo[] files = path.GetFiles();
+                IO.DirectoryInfo[] dirs = path.GetDirectories();
+                if (files.GetLength(0) > 0 || dirs.GetLength(0) > 0)
+                {
+                    if (MessageBox.Show(this, "المجلد المختار ليس فارغا، هل أنت مصمم على مسح كافة محتويات المجلد؟", "أرشيف جديد", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                    {
+                        foreach (IO.FileInfo f in files)
+                        {
+                            f.Delete();
+                        }
+                        foreach (IO.DirectoryInfo d in dirs)
+                        {
+                            d.Delete(true);
+                        }
+                    }
+                    else
+                    {
+                        return string.Empty;
+                    }
+                }
+                return path.FullName;
+            }
+            return string.Empty;
+        }
+
+        private void CreateArchive()
         {
             if (CloseArchiveIfOpen())
             {
-                SaveFileDialog dlg = new SaveFileDialog
-                {
-                    FileName = Archive.FileName,
-                    OverwritePrompt = false
-                };
+                string pathname = SelectSaveFolder();
 
-                if (dlg.ShowDialog() == true)
-                {
-                    string pathName = dlg.FileName;
-                    IO.DirectoryInfo path = new IO.FileInfo(pathName).Directory;
-                    IO.FileInfo[] files = path.GetFiles();
-                    IO.DirectoryInfo[] dirs = path.GetDirectories();
-                    if (files.GetLength(0) > 0 || dirs.GetLength(0) > 0)
-                    {
-                        if(MessageBox.Show(this, "المجلد المختار ليس فارغا، هل أنت مصمم على مسح كافة محتويات المجلد؟", "أرشيف جديد", MessageBoxButton.YesNo)==MessageBoxResult.Yes)
-                        {
-                            foreach(IO.FileInfo f in files)
-                            {
-                                f.Delete();
-                            }
-                            foreach(IO.DirectoryInfo d in dirs)
-                            {
-                                d.Delete(true);
-                            }
-                        }
-                        else
-                        {
-                            return;
-                        }
-                    }
-
-                    Archive.Create(path.FullName);
+                if(pathname!=string.Empty)
+                { 
+                    Archive.Create(pathname);
 
                     Title = "الأرشيف :" + Archive.PathName;
                     mnuSave.IsEnabled = true;
@@ -124,12 +136,15 @@ namespace Archiver.View
         //return true if the saving operation was complete, or false if canceled
         private bool SaveArchiveAs()
         {
-            SaveFileDialog dlg = new SaveFileDialog();
-            if (dlg.ShowDialog() == true)
-            {
-                string Filename = dlg.FileName;
+            string pathname = SelectSaveFolder();
 
-                Archive.SaveAs(Filename);
+            if (pathname!=string.Empty)
+            {
+                FoldersView.ItemsSource = null;
+
+                Archive.SaveAs(pathname);
+                
+                FoldersView.ItemsSource = Archive.RootDirectory.Subdirectories;
 
                 Title = "الأرشيف :" + Archive.PathName;
                 mnuSave.IsEnabled = true;
@@ -204,7 +219,7 @@ namespace Archiver.View
                 e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                OverwriteOptions option = OverwriteOptions.KeepExistingAbortWarn;
+                OverwriteOptions option = KeepExistingAbortWarn;
 
                 foreach (string file in files)
                 {
@@ -365,13 +380,13 @@ namespace Archiver.View
             {
                 if(localClipboard!= null)
                 {
-                    OverwriteOptions option = OverwriteOptions.NotSet;
+                    OverwriteOptions option = NotSet;
 
                     foreach (Model.Object obj in localClipboard)
                     {
                         if (parent.GetChild(obj.Name) is Model.Object existing)
                         {
-                            if (option == OverwriteOptions.NotSet)
+                            if (option == NotSet)
                             {
                                 OverwriteOptionsWindow dlg = new OverwriteOptionsWindow(option, this);
 
@@ -405,15 +420,15 @@ namespace Archiver.View
             {
                 if(obj is Master master)
                 {
-                    if(!master.Delete(MasterDeleteOptions.AbortIfHasImages))
+                    if(!master.Delete(AbortIfHasImages))
                     {
                         switch(MessageBox.Show("قد يكون لهذا المجلد أو الملف صور تعتمد عليه، هل تريد الإبقاء على تلك الصور؟", "حذف مجلد", MessageBoxButton.YesNoCancel))
                         {
                             case MessageBoxResult.Yes:
-                                master.Delete(MasterDeleteOptions.MakeFirstImageMaster);
+                                master.Delete(MakeFirstImageMaster);
                                 break;
                             case MessageBoxResult.No:
-                                master.Delete(MasterDeleteOptions.DeleteAllImages);
+                                master.Delete(DeleteAllImages);
                                 break;
                             default:
                                 break;

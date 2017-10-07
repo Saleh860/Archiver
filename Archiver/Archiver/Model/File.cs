@@ -16,8 +16,6 @@ namespace Archiver.Model
             theSize = size;
         }
 
-        public override bool IsDirectory => false;
-
         public long Size => theSize;
 
         /// <summary>

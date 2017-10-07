@@ -2,26 +2,25 @@
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
-using System.Collections;
-using System.Windows;
 using IO = System.IO;
 using System.Collections.Generic;
+using static Archiver.Model.Object;
+using static Archiver.Model.Object.OverwriteOptions;
 
 namespace Archiver.Model
 {
-    public enum OverwriteOptions
-    {
-        ReplaceExistingKeepImages,
-        ReplaceExistingReplaceImages,
-        KeepExistingRenameNew,
-        KeepExistingIgnoreNew,
-        KeepExistingAbortWarn,
-        NotSet
-    }
-
     [Serializable()]
     public class Archive  
     {
+        public class CantOverwriteException : Exception
+        {
+            public CantOverwriteException()
+                : base("لا يمكن إتمام عملية الإضافة في هذا المجلد لوجود مجلد أو ملف بنفس الاسم فيه")
+            {
+
+            }
+        }
+
         [NonSerialized()]
         static private Archive theArchive = null;
 
@@ -45,10 +44,17 @@ namespace Archiver.Model
             theArchive.Create();
         }
 
+        public class ArchiveAlreadyOpenException : Exception
+        {
+            public ArchiveAlreadyOpenException()
+                : base("أغلق الأرشيف المفتوح أولا.")
+            { }
+        }
+
         internal static void Load(string fileName)
         {
             if (theArchive != null)
-                throw new Exception("Must close the open archive first!");
+                throw new ArchiveAlreadyOpenException();
 
             IO.FileInfo info = new IO.FileInfo(fileName);
 
@@ -62,13 +68,31 @@ namespace Archiver.Model
             theArchive.thePathName = info.DirectoryName;
         }
 
+        public class NoOpenArchiveException:Exception
+        {
+            public NoOpenArchiveException()
+                :base("لا يوجد أرشيف مفتوح")
+            {
+
+            }
+        }
+
+        public class ArchiveNotFoundException: Exception
+        {
+            public ArchiveNotFoundException()
+                :base("لا يمكن حفظ الأرشيف، لا يمكن العثور على مجلد الأرشيف.")
+            {
+
+            }
+        }
+
         internal static bool Save()
         {
             if (theArchive == null)
-                throw new Exception("No open archive to save!");
+                throw new NoOpenArchiveException();
 
             if (!IO.Directory.Exists(PathName))
-                throw new Exception("Archive folder can't be found. Can't save!");
+                throw new ArchiveNotFoundException();
 
             IO.Stream stream = IO.File.Open(DatabaseFileName(PathName), IO.FileMode.Create);
 
@@ -81,15 +105,25 @@ namespace Archiver.Model
             return true;
         }
 
+        public class FolderAlreadyExistsException : Exception
+        {
+            public FolderAlreadyExistsException()
+                :base("لا يمكن حفظ الأرشيف في هذا المكان لوجود مجلد بنفس الاسم")
+            {
+
+            }
+        }
+
         internal static void SaveAs(string pathName)
         {
             if (theArchive == null)
-                throw new Exception("No open archive to save!");
+                throw new NoOpenArchiveException();
 
-            if (IO.Directory.Exists(pathName))
-                throw new Exception("A folder with the same name already exists!");
+            if (!IO.Directory.Exists(pathName) && !IO.File.Exists(pathName))
+                IO.Directory.CreateDirectory(pathName);
 
-            IO.Directory.CreateDirectory(pathName);
+            if (IO.File.Exists(pathName))
+                pathName = new IO.FileInfo(pathName).DirectoryName;
 
             theArchive.thePathName = pathName;
 
@@ -99,7 +133,7 @@ namespace Archiver.Model
         private Archive(string pathName)
         {
             if (theArchive != null)
-                throw new Exception("Can only handle one archive at a time.");
+                throw new ArchiveAlreadyOpenException();
 
             thePathName = pathName;
         }
@@ -150,7 +184,16 @@ namespace Archiver.Model
             return signature;
         }
 
-        public static void ArchiveObject(string filename, Directory parent, OverwriteOptions option)
+        public class PathNotFoundException : Exception
+        {
+            public PathNotFoundException(string filename)
+                : base("لا يمكن العثور على المسار : " + filename)
+            {
+
+            }
+        }
+
+        public static void ArchiveObject(string filename, Directory parent, Object.OverwriteOptions option)
         {
             IO.DirectoryInfo dirInfo = new IO.DirectoryInfo(filename);
             IO.FileInfo fileInfo = new IO.FileInfo(filename);
@@ -166,7 +209,7 @@ namespace Archiver.Model
             }
             else
             {
-                throw new Exception("لا يمكن العثور على المسار : " + filename);
+                throw new PathNotFoundException(filename);
             }
 
             if (parent.GetChild(Info.Name) is Object existing)
@@ -175,43 +218,41 @@ namespace Archiver.Model
                 {
                     switch (option)
                     {
-                        case OverwriteOptions.ReplaceExistingKeepImages:
-                            master.Delete(MasterDeleteOptions.MakeFirstImageMaster);
+                        case ReplaceExistingKeepImages:
+                            master.Delete(Master.DeleteOptions.MakeFirstImageMaster);
                             break;
 
-                        case OverwriteOptions.ReplaceExistingReplaceImages:
+                        case ReplaceExistingReplaceImages:
                             ReplaceObject(master, filename);
                             return;
 
-                        case OverwriteOptions.KeepExistingIgnoreNew:
+                        case KeepExistingIgnoreNew:
                             return;
 
-                        case OverwriteOptions.KeepExistingRenameNew:
+                        case KeepExistingRenameNew:
                             throw new NotImplementedException();
 
                         default:
-                            throw new Exception(String.Format("لا يمكن نسخ الملف {2} إلى المجلد {1} وذلك لوجود نفس الاسم هناك. يمكنك تغيير الإعدادات لتخطي",
-                                existing.Name, parent.Name, filename));
+                            throw new CantOverwriteException();
                     }
 
                 }
                 else
                     switch (option)
                     {
-                        case OverwriteOptions.ReplaceExistingKeepImages:
-                        case OverwriteOptions.ReplaceExistingReplaceImages:
+                        case ReplaceExistingKeepImages:
+                        case ReplaceExistingReplaceImages:
                             existing.Delete();
                             break;
 
-                        case OverwriteOptions.KeepExistingIgnoreNew:
+                        case KeepExistingIgnoreNew:
                             return;
 
-                        case OverwriteOptions.KeepExistingRenameNew:
+                        case KeepExistingRenameNew:
                             throw new NotImplementedException();
 
                         default:
-                            throw new Exception(String.Format("لا يمكن نسخ الملف {2} إلى المجلد {1} وذلك لوجود نفس الاسم هناك. يمكنك تغيير الإعدادات لتخطي",
-                                existing.Name, parent.Name, filename));
+                            throw new CantOverwriteException();
                     }
             }
             if (dirInfo.Exists)

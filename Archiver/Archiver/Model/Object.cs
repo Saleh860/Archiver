@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Archiver.Model;
 
 namespace Archiver.Model
 {
@@ -12,29 +13,53 @@ namespace Archiver.Model
     //Implementation of an abstract file-system object
     public abstract class Object : INotifyPropertyChanged
     {
+        public class CantOverwriteException : Exception
+        {
+            public CantOverwriteException()
+                : base("لا يمكن إتمام عملية الإضافة في هذا المجلد لوجود مجلد أو ملف بنفس الاسم فيه")
+            {
+
+            }
+        }
+
+        public enum OverwriteOptions
+        {
+            ReplaceExistingKeepImages,
+            ReplaceExistingReplaceImages,
+            KeepExistingRenameNew,
+            KeepExistingIgnoreNew,
+            KeepExistingAbortWarn,
+            NotSet
+        }
+
         private Directory theParent = null;
         private DateTime dateAdded = DateTime.Now;
         private string theName;
         private bool isSelected=false;
 
-        private void MoveTo(Directory newParent)
+        /// <summary>
+        /// Move the object to another directory, i.e. removes the object from the current parent 
+        /// directory and adds it to the new parent directory, and sets the Parent property to the new parent.
+        /// </summary>
+        /// <param name="newParent">The new parent directory to which the object is to be moved.</param>
+        public virtual void MoveTo(Directory newParent)
         {
-            if (newParent != null)
-            {
-                //Make sure the newParent is no a child of this object
-                if (newParent.IsDescendant(this))
-                    throw new Exception("لا يمكن نقل المجلد داخل نفسه");
-            }
 
+            //Remove from the children of current parent directory
             if (theParent != null)
                 theParent.RemoveChild(this);
 
             theParent = newParent;
 
+            //Add to the children of new parent directory
             if(theParent!=null)
                 theParent.AddChild(this);
         }
 
+        /// <summary>
+        /// This is called internally to indicate that a property has changed and fire the event handler chain
+        /// </summary>
+        /// <param name="e"></param>
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             if (PropertyChanged == null)
@@ -47,7 +72,7 @@ namespace Archiver.Model
 
         /// <summary>
         ///        When queried, returns the parent directory or null if object is a root object.
-        ///        When assigned, removes the object from the current parent directory and add it to the new parent directory, and sets the Parent property to the new parent
+        ///        When assigned, moves the object to the new parent directory
         /// </summary>
         public Directory Parent { get => theParent; set => MoveTo(value); }
 
@@ -67,17 +92,8 @@ namespace Archiver.Model
         public string FullName => (theParent == null) ? theName:theParent.FullName + "\\" + theName;
 
         /// <summary>
-        ///     Returns true if the object is a directory, and false if the object is a file
+        ///     Sets/Gets the isSelected flag, which indicates whether the object is currently selected.
         /// </summary>
-        public abstract bool IsDirectory { get; }
-
-        /// <summary>
-        ///     Returns true if the object is a virtual copy of another object, and false if the object is a real physical object
-        /// </summary>
-        public abstract bool IsImage { get; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public bool IsSelected
         {
             get
@@ -95,9 +111,19 @@ namespace Archiver.Model
         }
 
         /// <summary>
-        /// Returns a (hopefully) unique signature to identify the content of the file-system object
+        ///     Returns true if the object is a directory, and false if the object is a file
         /// </summary>
-        public abstract string Signature { get; }
+        public bool IsDirectory { get => this is Directory dir || this is ImageDirectory image; }
+
+        /// <summary>
+        ///     Returns true if the object is a virtual copy of another object, and false if the object is a real physical object
+        /// </summary>
+        public bool IsImage { get => this is Image image; }
+
+        /// <summary>
+        ///   Where event handlers are hooked up
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Construct a file-system object with the given name
@@ -105,12 +131,12 @@ namespace Archiver.Model
         /// <param name="name">The initial name of the file-system object</param>
         public Object(string name) { theName = name; }
 
-        public abstract void Export(string pathName);
-
-
-        public abstract Object CopyTo(string ImageName, Directory parent);
-
-        public bool IsDescendant(Object ancestor)
+        /// <summary>
+        /// Returns true if this object is a child of the given directory or a child of a descendant of the given directory
+        /// </summary>
+        /// <param name="ancestor"></param>
+        /// <returns></returns>
+        public bool IsDescendant(Directory ancestor)
         {
             if (Parent == null)
                 return false;
@@ -120,6 +146,18 @@ namespace Archiver.Model
                 return Parent.IsDescendant(ancestor);
         }
 
+        private bool SetParentToRootDirectory(Object source)
+        {
+            source.Parent=Archive.RootDirectory;
+            return true;
+        }
+
+        //Overridables
+
+        public virtual void Delete()
+        {
+            Parent=null;
+        }
 
         public virtual bool IntegrityCheck(IntegrityCheckResults results)
         {
@@ -140,12 +178,16 @@ namespace Archiver.Model
             return false;
         }
 
-        private bool SetParentToRootDirectory(Object source)
-        {
-            source.Parent=Archive.RootDirectory;
-            return true;
-        }
+        /// <summary>
+        /// Returns a (hopefully) unique signature to identify the content of the file-system object
+        /// </summary>
+        public abstract string Signature { get; }
 
+        public abstract void Export(string pathName);
+
+        public abstract Object CopyTo(string ImageName, Directory parent);
+
+        //Protected Members
         protected class OfTheSameNameComparer : IEqualityComparer<Object>
         {
             public bool Equals(Object x, Object y)
@@ -160,10 +202,5 @@ namespace Archiver.Model
         };
 
         protected static OfTheSameNameComparer OfTheSameName = new OfTheSameNameComparer();
-
-        public virtual void Delete()
-        {
-            Parent=null;
-        }
     }
 }

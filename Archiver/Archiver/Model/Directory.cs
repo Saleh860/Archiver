@@ -7,9 +7,19 @@ using System.Collections.ObjectModel;
 
 namespace Archiver.Model
 {
+
     [Serializable()]
     public class Directory : Master
     {
+        public class RecursiveFoldersException : Exception
+        {
+            public RecursiveFoldersException()
+                : base("لا يمكن نقل المجلد داخل نفسه")
+            {
+
+            }
+        }
+
         private ObservableCollection<Object> theSubdirectories;
         private ObservableCollection<Object> theFiles;
 
@@ -77,11 +87,7 @@ namespace Archiver.Model
 
         public IEnumerable<Object> Children => theSubdirectories.AsEnumerable<Object>().Union(theFiles);
 
-        //        public IEnumerable<FSImage> ImageChildren => Children.Where((obj) => ((FSObject)obj).IsImage).Select((obj) => (FSImage)obj);
-
         public IEnumerable<File> MasterFiles => theFiles.OfType<File>();
-
-        //        public IEnumerable<FSMaster> MasterChildren => Children.Where((obj) => !((FSObject)obj).IsImage).Select((obj) => (FSMaster)obj);
 
         public override void RemoveAllImages()
         {
@@ -102,14 +108,12 @@ namespace Archiver.Model
         public IEnumerable<Directory> MasterSubdirectories =>
             theSubdirectories.AsEnumerable().Where((obj) => !((Object)obj).IsImage).Select((obj) => (Directory)obj);
 
-        public override bool IsDirectory => true;
-
         public void AddChild(Object obj)
         {
             if (theSubdirectories.Contains(obj, OfTheSameName))
-                throw new Exception("لا يمكن إتمام عملية الإضافة في هذا المكان لوجود مجلد بنفس الاسم فيه");
+                throw new CantOverwriteException();
             else if (theFiles.Contains(obj, OfTheSameName))
-                throw new Exception("لا يمكن إتمام عملية الإضافة في هذا المكان لوجود ملف بنفس الاسم فيه");
+                throw new CantOverwriteException();
 
 
             if (obj.IsDirectory)
@@ -156,11 +160,25 @@ namespace Archiver.Model
             }
         }
 
+        public override void MoveTo(Directory newParent)
+        {
+            //If this object is a directory, 
+            if (newParent != null)
+            {
+                //Make sure the newParent is not a child of this object
+                if (newParent.IsDescendant(this))
+                    throw new RecursiveFoldersException();
+            }
+            base.MoveTo(newParent);
+        }
+
         public override Object CopyTo(string ImageName, Directory parent)
         {
             //Make sure the parent of the new copy is not a descendant of the master directory 
             if (parent.IsDescendant(this))
-                throw new Exception("لا يمكن عمل نسخة من المجلد داخل نفسه");
+            {
+                throw new RecursiveFoldersException();
+            }
 
             return new ImageDirectory(ImageName, this) { Parent = parent };
         }

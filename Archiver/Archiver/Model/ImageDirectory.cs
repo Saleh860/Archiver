@@ -26,9 +26,6 @@ namespace Archiver.Model
 
         public IEnumerable<Directory> MasterSubdirectories => ((Directory)theMaster).MasterSubdirectories;
 
-        public override bool IsDirectory => true;
-
-
         private bool isExpanded;
 
         public bool IsExpanded

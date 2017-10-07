@@ -8,9 +8,9 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Archiver")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyDescription("Create and manipulate optimally stored archives with potential duplicate files and folders.")]
+[assembly: AssemblyConfiguration("Windows")]
+[assembly: AssemblyCompany("Saleh860")]
 [assembly: AssemblyProduct("Archiver")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]

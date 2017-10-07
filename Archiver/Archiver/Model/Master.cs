@@ -7,17 +7,17 @@ using System.Windows;
 namespace Archiver.Model
 {
 
-    enum MasterDeleteOptions
-    {
-        DeleteAllImages,
-        MakeFirstImageMaster,
-        AbortIfHasImages
-    }
-
     [Serializable()]
     //Implementation of a physical object
     public abstract class Master: Object
     {
+        public enum DeleteOptions
+        {
+            DeleteAllImages,
+            MakeFirstImageMaster,
+            AbortIfHasImages
+        }
+
         protected string theSignature;
         protected Collection<Image> theImages;
 
@@ -46,8 +46,6 @@ namespace Archiver.Model
             RemoveImage(image);
             image.Delete();
         }
-
-        public override bool IsImage => false;
 
         public void AddImage(Image image)
         {
@@ -117,21 +115,21 @@ namespace Archiver.Model
 
         public override void Delete()
         {
-            Delete(MasterDeleteOptions.AbortIfHasImages);
+            Delete(DeleteOptions.AbortIfHasImages);
         }
 
-        internal bool Delete(MasterDeleteOptions option)
+        internal bool Delete(DeleteOptions option)
         {
             if (HasImages())
             {
                 switch(option)
                 {
-                    case MasterDeleteOptions.DeleteAllImages:
+                    case DeleteOptions.DeleteAllImages:
 
                         RemoveAllImages();
                         break;
 
-                    case MasterDeleteOptions.MakeFirstImageMaster:
+                    case DeleteOptions.MakeFirstImageMaster:
 
                         if(MakeFirstImageMaster())
                         {

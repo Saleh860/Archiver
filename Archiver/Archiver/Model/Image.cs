@@ -34,8 +34,6 @@ namespace Archiver.Model
             }
         }
 
-        public override bool IsImage => true;
-
         public override string Signature => theMaster.Signature;
 
         public override Object CopyTo(string ImageName, Directory parent)

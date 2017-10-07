@@ -14,8 +14,6 @@ namespace Archiver.Model
 
         public long Size => ((File)theMaster).Size;
 
-        public override bool IsDirectory => false;
-
         public override void Export(string pathName)
         {
             (Master as File).Export(pathName);

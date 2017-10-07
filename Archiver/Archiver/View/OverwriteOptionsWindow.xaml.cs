@@ -1,17 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using Archiver.Model;
+﻿using System.Windows;
+using static Archiver.Model.Object;
+using static Archiver.Model.Object.OverwriteOptions;
 
 namespace Archiver.View
 {
@@ -30,20 +19,20 @@ namespace Archiver.View
 
             switch(option)
             {
-                case OverwriteOptions.ReplaceExistingKeepImages:
-                    this.ReplaceExistingKeepImages.IsChecked = true;
+                case ReplaceExistingKeepImages:
+                    optReplaceExistingKeepImages.IsChecked = true;
                     break;
-                case OverwriteOptions.ReplaceExistingReplaceImages:
-                    this.ReplaceExistingReplaceImages.IsChecked = true;
+                case ReplaceExistingReplaceImages:
+                    optReplaceExistingReplaceImages.IsChecked = true;
                     break;
-                case OverwriteOptions.KeepExistingIgnoreNew:
-                    this.KeepExistingIgnoreNew.IsChecked = true;
+                case KeepExistingIgnoreNew:
+                    optKeepExistingIgnoreNew.IsChecked = true;
                     break;
-                case OverwriteOptions.KeepExistingRenameNew:
-                    this.KeepExistingRenameNew.IsChecked = true;
+                case KeepExistingRenameNew:
+                    optKeepExistingRenameNew.IsChecked = true;
                     break;
-                case OverwriteOptions.KeepExistingAbortWarn:
-                    this.KeepExistingAbortWarn.IsChecked = true;
+                case KeepExistingAbortWarn:
+                    optKeepExistingAbortWarn.IsChecked = true;
                     break;
                 default:
                     break;
@@ -60,24 +49,24 @@ namespace Archiver.View
         {
             DialogResult = true;
             {
-                if (this.ReplaceExistingKeepImages.IsChecked is bool Checked && Checked)
-                    option = OverwriteOptions.ReplaceExistingKeepImages;
+                if (optReplaceExistingKeepImages.IsChecked is bool Checked && Checked)
+                    option = ReplaceExistingKeepImages;
             }
             {
-                if (this.ReplaceExistingReplaceImages.IsChecked is bool Checked && Checked)
-                    option = OverwriteOptions.ReplaceExistingReplaceImages;
+                if (optReplaceExistingReplaceImages.IsChecked is bool Checked && Checked)
+                    option = ReplaceExistingReplaceImages;
             }
             {
-                if (this.KeepExistingIgnoreNew.IsChecked is bool Checked && Checked)
-                    option = OverwriteOptions.KeepExistingIgnoreNew;
+                if (optKeepExistingIgnoreNew.IsChecked is bool Checked && Checked)
+                    option = KeepExistingIgnoreNew;
             }
             {
-                if (this.KeepExistingRenameNew.IsChecked is bool Checked && Checked)
-                    option = OverwriteOptions.KeepExistingRenameNew;
+                if (optKeepExistingRenameNew.IsChecked is bool Checked && Checked)
+                    option = KeepExistingRenameNew;
             }
             {
-                if (this.KeepExistingAbortWarn.IsChecked is bool Checked && Checked)
-                    option = OverwriteOptions.KeepExistingAbortWarn;
+                if (optKeepExistingAbortWarn.IsChecked is bool Checked && Checked)
+                    option = KeepExistingAbortWarn;
             }
 
             Close();

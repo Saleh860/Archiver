@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Archiver.App" Collapsed="true">
+    <Position X="9.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>App.xaml.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Archiver.Model.Archive" Collapsed="true">
+    <Position X="2.75" Y="5" Width="1.5" />
+    <NestedTypes>
+      <Class Name="Archiver.Model.Archive.NoOpenArchiveException" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Model\Archive.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="Archiver.Model.Archive.ArchiveNotFoundException" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Model\Archive.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="Archiver.Model.Archive.FolderAlreadyExistsException" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Model\Archive.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="Archiver.Model.Archive.PathNotFoundException" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Model\Archive.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="Archiver.Model.Archive.ArchiveAlreadyOpenException" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Model\Archive.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="Archiver.Model.Archive.CantOverwriteException" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Model\Archive.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>IAEAgIAAAAAQAAAABAIACAACAABAAFECgBAAADDIQAA=</HashCode>
+      <FileName>Model\Archive.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="theDirectoryArchive" />
+      <Field Name="theFileArchive" />
+      <Field Name="theRootDirectory" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Archiver.Model.Directory" Collapsed="true">
+    <Position X="0.5" Y="3.25" Width="1.5" />
+    <NestedTypes>
+      <Class Name="Archiver.Model.Directory.RecursiveFoldersException" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Model\Directory.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAEgAAEAQAICIEBAIAABIIAAAAgAAAgUAAKIE=</HashCode>
+      <FileName>Model\Directory.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="theSubdirectories" />
+      <Field Name="theFiles" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Archiver.Model.DirectoryArchive" Collapsed="true">
+    <Position X="7.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAAAAAIAAEAAAAABAAgAAAAACAAAA=</HashCode>
+      <FileName>Model\DirectoryArchive.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Archiver.Model.File" Collapsed="true">
+    <Position X="2.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAgAQAAAAABAAAAAEAAAAAgAAAAAAAIgA=</HashCode>
+      <FileName>Model\File.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Archiver.Model.FileArchive" Collapsed="true">
+    <Position X="7.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYAAAAAAAAAAAAABAAAIEAEAAAAgAAAgAAAABBAQAA=</HashCode>
+      <FileName>Model\FileArchive.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Archiver.Model.Image" Collapsed="true">
+    <Position X="6" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAAAAAAAAAAAEAAAAAAAgAAAgAIAE=</HashCode>
+      <FileName>Model\Image.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Archiver.Model.ImageDirectory" Collapsed="true">
+    <Position X="5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAEAAAAAAAAAAEBAAAABAAAAAAAAAAgEAAAIE=</HashCode>
+      <FileName>Model\ImageDirectory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Archiver.Model.ImageFile" Collapsed="true">
+    <Position X="7.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\ImageFile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Archiver.Model.IntegrityCheckResults" Collapsed="true">
+    <Position X="11.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAAAAAAAAAQAAA=</HashCode>
+      <FileName>Model\IntegrityCheck.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Archiver.Model.IntegrityCheckResult" Collapsed="true">
+    <Position X="11.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAEAAAAABACEAAAAAAAAAAABAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>Model\IntegrityCheck.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Archiver.Model.Master" Collapsed="true">
+    <Position X="1.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAQgAAGAAAAAAAAAIAAAEAABABgAAAAAASCAE=</HashCode>
+      <FileName>Model\Master.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Archiver.Model.Object" Collapsed="true">
+    <Position X="3.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQBAAAEIAAIACARAQAgIEIAMAEgQAABAEAIAE=</HashCode>
+      <FileName>Model\Object.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Archiver.Properties.Resources" Collapsed="true">
+    <Position X="9.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABEAAAAQAAAAAAAAAAAAAAAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Archiver.Properties.Settings" Collapsed="true">
+    <Position X="9.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Archiver.View.MainWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AJAQAEAAAIARQAAAgjACCgQUACAIAAAiDAACAAgBAAA=</HashCode>
+      <FileName>View\MainWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Archiver.View.OverwriteOptionsWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="13.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAAAIAAAACAEAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>View\OverwriteOptionsWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Delegate Name="Archiver.Model.IntegrityFixer" Collapsed="true">
+    <Position X="11.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\IntegrityCheck.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

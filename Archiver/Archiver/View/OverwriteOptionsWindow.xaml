@@ -12,11 +12,11 @@
             <TextBlock x:Name="Message" TextWrapping="Wrap" Text="ماذا تريد أن تفعل إذا وجد ملف أو مجلد بنفس الاسم في المجلد المقصود؟" />
             
             <StackPanel Margin="10,10,10,10" VerticalAlignment="Top">
-                <RadioButton x:Name="ReplaceExistingKeepImages" Content="حذف الموجود واستبداله بالجديد، مع الاحتفاظ بصور القديم." VerticalAlignment="Top" HorizontalContentAlignment="Stretch"/>
-                <RadioButton x:Name="ReplaceExistingReplaceImages" Content="حذف الموجود واستبداله بالجديد، مع استبدال الصور أيضا" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                <RadioButton x:Name="KeepExistingRenameNew" Content="الإبقاء على الموجود وإعادة تسمية الجديد بإضافة رقم تلقائي" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                <RadioButton x:Name="KeepExistingIgnoreNew" Content="الإبقاء على الموجود وتجاهل الجديد تماما دون تحذير" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                <RadioButton x:Name="KeepExistingAbortWarn" Content="الإبقاء على الموجود وإجهاض العملية مع رسالة تحذير" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <RadioButton x:Name="optReplaceExistingKeepImages" Content="حذف الموجود واستبداله بالجديد، مع الاحتفاظ بصور القديم." VerticalAlignment="Top" HorizontalContentAlignment="Stretch"/>
+                <RadioButton x:Name="optReplaceExistingReplaceImages" Content="حذف الموجود واستبداله بالجديد، مع استبدال الصور أيضا" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <RadioButton x:Name="optKeepExistingRenameNew" Content="الإبقاء على الموجود وإعادة تسمية الجديد بإضافة رقم تلقائي" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <RadioButton x:Name="optKeepExistingIgnoreNew" Content="الإبقاء على الموجود وتجاهل الجديد تماما دون تحذير" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <RadioButton x:Name="optKeepExistingAbortWarn" Content="الإبقاء على الموجود وإجهاض العملية مع رسالة تحذير" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="10,10,10,10" >
                 <Button Content="  موافق  " Margin="10,10,10,10" x:Name="OK" Click="OK_Click"/>
